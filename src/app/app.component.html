@@ -1,3 +1,34 @@
-<h1 class="text-3xl font-bold underline">
-  Hello world!
-</h1>
+<div class="container">
+  <select name="" id="" (change)="onSelect($event.target)">
+    <option value="">--Select a team member---</option>
+    @for (user of users(); track $index) {
+    <option [value]="user.id">{{ user.name }}</option>
+    }
+  </select>
+  <input type="checkbox" (change)="onFilter($event.target)" />Show only
+  incomplete tasks
+
+  <h2>ToDos</h2>
+  @if (currentMember()) { for: {{ currentMember()?.name }}
+  } @if(isLoading()){
+  <div>Loading...</div>
+  } @if(todosFormMember().length > 0){
+  <div class="grid">
+    <div class="cellHeader">Todo</div>
+    <div class="cellHeader">Completed?</div>
+
+    @for(t of todosFormMember(); track t.id) {
+    <div class="cell">{{ t.title }}</div>
+    <div class="cellCheck">
+      <input
+        type="checkbox"
+        [checked]="t.complete"
+        (change)="onChangeStatus(t, $event.target)"
+      />
+    </div>
+    } @empty { @if(errorMessage()){
+    <div>Error: {{ errorMessage() }}</div>
+    } }
+  </div>
+  }
+</div>

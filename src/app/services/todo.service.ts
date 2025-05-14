@@ -28,6 +28,7 @@ export class TodoService {
     isLoading: false,
     currentMember: undefined,
     memberToDos: [],
+    incompleteOnly: false,
     error: null,
   });
 
@@ -36,6 +37,14 @@ export class TodoService {
   currentMember = computed(() => this.state().currentMember);
   toDos = computed(() => this.state().memberToDos);
   errorMessage = computed(() => this.state().error);
+  incompleteOnly = computed(() => this.state().incompleteOnly);
+  filteredToDos = computed(() => {
+    if (this.incompleteOnly()) {
+      return this.toDos().filter((t) => t.completed === false);
+    } else {
+      return this.toDos();
+    }
+  });
 
   private selectedIdSubject = new Subject<number>();
   private selectedId$ = this.selectedIdSubject.asObservable();
@@ -96,22 +105,40 @@ export class TodoService {
     }));
   }
 
+  filterTodos(filter: boolean) {
+    this.state.update((state) => ({
+      ...state,
+      incompleteOnly: filter,
+    }));
+  }
+
   getTodosForMember(memberId: number) {
     this.selectedIdSubject.next(memberId);
   }
-}
 
+  changeStatus(task: ToDo, status: boolean) {
+    // Mark the task as completed
+    const updatedTasks = this.toDos().map((t) =>
+      t.id === task.id ? { ...t, completed: status } : t
+    );
+    this.state.update((state) => ({
+      ...state,
+      memberToDos: updatedTasks,
+    }));
+  }
+}
 export interface ToDo {
   userId: number;
   id: number;
   title: string;
-  complete: boolean;
+  completed: boolean;
 }
 
 export interface ToDoState {
   isLoading: boolean;
   currentMember: User | undefined;
   memberToDos: ToDo[];
+  incompleteOnly: boolean;
   error: string | null;
 }
 

@@ -19,7 +19,7 @@ export class AppComponent {
   users = this.userService.members;
   currentMember = this.todoService.currentMember;
   isLoading = this.todoService.isLoading;
-  todosFormMember = this.todoService.toDos;
+  todosFormMember = this.todoService.filteredToDos;
   errorMessage = this.todoService.errorMessage;
 
   onSelect(ele: EventTarget | null) {
@@ -29,10 +29,10 @@ export class AppComponent {
   }
 
   onFilter(ele: EventTarget | null) {
-    throw new Error('Method not implemented.');
+    this.todoService.filterTodos((ele as HTMLInputElement).checked)
   }
 
-  onChangeStatus(task: ToDo, arg1: EventTarget | null) {
-    throw new Error('Method not implemented.');
+  onChangeStatus(task: ToDo, ele: EventTarget | null) {
+    this.todoService.changeStatus(task, (ele as HTMLInputElement).checked);
   }
 }
